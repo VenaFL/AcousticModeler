@@ -12,3 +12,11 @@ class AudioController:
     def get_wave_duration(self):
         return self.model.get_wave_duration()
 
+    def show_wav(self):
+        return self.model.show_wav()
+
+    def get_freq(self):
+        return self.model.get_freq()
+
+    def show_freq(self):
+        return self.model.show_freq()
