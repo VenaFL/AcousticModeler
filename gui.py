@@ -6,15 +6,12 @@ class AudioView:
     def __init__(self, root, controller):
         self.controller = controller
 
-        # Title
         self.window = root
         self.window.title("Acoustic Modeler")
 
-        # Greeting text
         self.label = tk.Label(self.window, text="Welcome to the Acoustic Modeler!")
         self.label.pack(pady=5)
 
-        # Button to select an audio file
         self.load_button = tk.Button(self.window, text="Load Audio File", command=self.load_audio_file)
         self.load_button.pack(pady=0)
 
@@ -24,9 +21,16 @@ class AudioView:
         self.frequency_label = tk.Label(self.window, text="")
         self.frequency_label.pack(pady=0)
 
+        self.file_name_label = tk.Label(self.window, text="")
+        self.file_name_label.pack(pady= 1)
+
     def load_audio_file(self):
         file_path = filedialog.askopenfilename(title="Select Audio File")
         self.controller.load_audio_file(file_path)
+
+        file_name = file_path.split("//")[-1]
+        self.file_name_label.config(text=f"File: {file_name}")
+
         self.controller.strip_metadata()
         formatted_duration = "{:.2f}".format(self.controller.get_wave_duration())
         self.duration_label.config(text=f"Duration: {formatted_duration} seconds")

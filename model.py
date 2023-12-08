@@ -38,7 +38,7 @@ class AudioModel:
         self.channels = self.audio_data.channels
         if self.channels > 2:
             self.audio_data = self.audio_data.set_channels(1)
-            self.audio_data.export(self.wav_path, format='wav')
+            # self.audio_data.export(self.wav_path, format='wav')
         self.channels = self.audio_data.channels
 
     def get_wave_duration(self):
