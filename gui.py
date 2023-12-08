@@ -22,7 +22,16 @@ class AudioView:
         self.frequency_label.pack(pady=0)
 
         self.file_name_label = tk.Label(self.window, text="")
-        self.file_name_label.pack(pady= 1)
+        self.file_name_label.pack(pady=1)
+
+        self.low_label = tk.Label(self.window, text="")
+        self.low_label.pack(pady=1)
+
+        self.med_label = tk.Label(self.window, text="")
+        self.med_label.pack(pady=1)
+
+        self.high_label = tk.Label(self.window, text="")
+        self.high_label.pack(pady=1)
 
     def load_audio_file(self):
         file_path = filedialog.askopenfilename(title="Select Audio File")
@@ -37,4 +46,11 @@ class AudioView:
         self.controller.show_wav()
         formatted_frequency = "{:.2f}".format(self.controller.get_freq())
         self.frequency_label.config(text=f"Sample Rate: {formatted_frequency} Hz")
-        self.controller.show_freq()
+
+        target_frequency, rt60 = self.controller.plot_rt60(500)
+        self.low_label.config(text=f'The RT60 reverb time at freq {int(target_frequency)}Hz is {round(abs(rt60), 2)} seconds')
+        target_frequency, rt60 = self.controller.plot_rt60(1000)
+        self.med_label.config(text=f'The RT60 reverb time at freq {int(target_frequency)}Hz is {round(abs(rt60), 2)} seconds')
+        target_frequency, rt60 = self.controller.plot_rt60(5000)
+        self.high_label.config(text=f'The RT60 reverb time at freq {int(target_frequency)}Hz is {round(abs(rt60), 2)} seconds')
+

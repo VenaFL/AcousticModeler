@@ -18,5 +18,6 @@ class AudioController:
     def get_freq(self):
         return self.model.get_freq()
 
-    def show_freq(self):
-        return self.model.show_freq()
+    def plot_rt60(self, target):
+        return self.model.show_freq(target=target)
+

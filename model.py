@@ -4,6 +4,7 @@ from scipy.io import wavfile
 import scipy.io
 import matplotlib.pyplot as plt
 import numpy as np
+import librosa
 import wave
 
 from scipy.stats import t
@@ -63,25 +64,26 @@ class AudioModel:
         samplerate, data = wavfile.read(self.wav_path)
         return samplerate
 
-    def show_freq(self):
+    def show_freq(self, target):
         if self.channels == 1:
             sample_rate, data = wavfile.read(self.wav_path)
             spectrum, freqs, t, im = plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
-            cbar = plt.colorbar(im)
-            plt.xlabel('Time (s)')
-            plt.ylabel('Frequency (Hz)')
-            cbar.set_label('Intensity (dB)')
-            plt.show()
+            plt.close()
+            #cbar = plt.colorbar(im)
+            #plt.xlabel('Time (s)')
+            #plt.ylabel('Frequency (Hz)')
+            #cbar.set_label('Intensity (dB)')
+            # plt.show()
 
-        def find_target_frequency(freqs):
+        def find_target_frequency(freqs, t):
             for x in freqs:
-                if x > 1000:
+                if x > t:
                     break
             return x
 
         def frequency_check():
             global target_frequency
-            target_frequency = find_target_frequency(freqs)
+            target_frequency = find_target_frequency(freqs, target)
             index_of_frequency = np.where(freqs == target_frequency)[0][0]
             data_for_frequency = spectrum[index_of_frequency]
             data_in_db_fun = 10 * np.log10(data_for_frequency)
@@ -116,4 +118,4 @@ class AudioModel:
         rt60 = 3 * rt20
         plt.grid()
         plt.show()
-        print(f'The RT60 reverb time at freq {int(target_frequency)}Hz is {round(abs(rt60), 2)} seconds')
+        return target_frequency, rt60
