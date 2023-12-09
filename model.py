@@ -65,6 +65,7 @@ class AudioModel:
         return samplerate
 
     def show_freq(self, target):
+
         if self.channels == 1:
             sample_rate, data = wavfile.read(self.wav_path)
             spectrum, freqs, t, im = plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
@@ -119,3 +120,62 @@ class AudioModel:
         plt.grid()
         plt.show()
         return target_frequency, rt60
+
+    def combine_plots(self, targets):
+
+        if self.channels == 1:
+            sample_rate, data = wavfile.read(self.wav_path)
+            spectrum, freqs, t, im = plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
+            plt.close()
+            #cbar = plt.colorbar(im)
+            #plt.xlabel('Time (s)')
+            #plt.ylabel('Frequency (Hz)')
+            #cbar.set_label('Intensity (dB)')
+            # plt.show()
+        plt.figure(2)
+        colors = ['blue', 'green', 'red']
+
+        for i, color in enumerate(colors):
+            def find_target_frequency(freqs, t):
+                for x in freqs:
+                    if x > t:
+                        break
+                return x
+
+            def frequency_check():
+                global target_frequency
+                target_frequency = find_target_frequency(freqs, targets[i])
+                index_of_frequency = np.where(freqs == target_frequency)[0][0]
+                data_for_frequency = spectrum[index_of_frequency]
+                data_in_db_fun = 10 * np.log10(data_for_frequency)
+                return data_in_db_fun
+
+            data_in_db = frequency_check()
+            plt.plot(t, data_in_db, linewidth=1, alpha=0.7, color=color, label=f'{targets[i]} Hz')
+            plt.xlabel('Time (s)')
+            plt.ylabel('Power (dB)')
+            index_of_max = np.argmax(data_in_db)
+            value_of_max = data_in_db[index_of_max]
+            plt.plot(t[index_of_max], data_in_db[index_of_max], 'go')
+            sliced_array = data_in_db[index_of_max:]
+            value_of_max_less_5 = value_of_max - 5
+
+            def find_nearest_value(array, value):
+                array = np.asarray(array)
+                idx = (np.abs(array - value)).argmin()
+                return array[idx]
+
+            value_of_max_less_5 = find_nearest_value(sliced_array, value_of_max_less_5)
+            index_of_max_less_5 = np.where(data_in_db == value_of_max_less_5)
+            plt.plot(t[index_of_max_less_5], data_in_db[index_of_max], 'yo')
+
+            value_of_max_less_25 = value_of_max - 25
+            value_of_max_less_25 = find_nearest_value(sliced_array, value_of_max_less_25)
+            index_of_max_less_25 = np.where(data_in_db == value_of_max_less_25)
+            plt.plot(t[index_of_max_less_25], data_in_db[index_of_max_less_25], 'ro')
+
+            rt20 = (t[index_of_max_less_5] - t[index_of_max_less_25])[0]
+            rt60 = 3 * rt20
+            plt.grid()
+        plt.legend()
+        plt.show()

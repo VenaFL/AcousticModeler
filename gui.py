@@ -6,6 +6,8 @@ class AudioView:
     def __init__(self, root, controller):
         self.controller = controller
 
+        self.targets = [250, 1000, 5000]
+
         self.window = root
         self.window.title("Acoustic Modeler")
 
@@ -14,6 +16,9 @@ class AudioView:
 
         self.load_button = tk.Button(self.window, text="Load Audio File", command=self.load_audio_file)
         self.load_button.pack(pady=0)
+
+        self.combine_button = tk.Button(self.window, text="Combine Plots", command=self.combine_plots)
+        self.combine_button.pack_forget()
 
         self.duration_label = tk.Label(self.window, text="")
         self.duration_label.pack(pady=0)
@@ -47,10 +52,14 @@ class AudioView:
         formatted_frequency = "{:.2f}".format(self.controller.get_freq())
         self.frequency_label.config(text=f"Sample Rate: {formatted_frequency} Hz")
 
-        target_frequency, rt60 = self.controller.plot_rt60(500)
+        target_frequency, rt60 = self.controller.plot_rt60(self.targets[0])
         self.low_label.config(text=f'The RT60 reverb time at freq {int(target_frequency)}Hz is {round(abs(rt60), 2)} seconds')
-        target_frequency, rt60 = self.controller.plot_rt60(1000)
+        target_frequency, rt60 = self.controller.plot_rt60(self.targets[1])
         self.med_label.config(text=f'The RT60 reverb time at freq {int(target_frequency)}Hz is {round(abs(rt60), 2)} seconds')
-        target_frequency, rt60 = self.controller.plot_rt60(5000)
+        target_frequency, rt60 = self.controller.plot_rt60(self.targets[2])
         self.high_label.config(text=f'The RT60 reverb time at freq {int(target_frequency)}Hz is {round(abs(rt60), 2)} seconds')
 
+        self.combine_button.pack(pady=1)
+
+    def combine_plots(self):
+        self.controller.combine_plots(self.targets)

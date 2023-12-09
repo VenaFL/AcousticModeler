@@ -21,3 +21,6 @@ class AudioController:
     def plot_rt60(self, target):
         return self.model.show_freq(target=target)
 
+    def combine_plots(self, targets):
+        self.model.combine_plots(targets)
+
