@@ -1,19 +1,19 @@
 import os
 from pydub import AudioSegment
 from scipy.io import wavfile
-import scipy.io
 import matplotlib.pyplot as plt
 import numpy as np
-import librosa
 import wave
 
 
+# Holds the logic of the program
 class AudioModel:
     def __init__(self):
         self.audio_data = None
         self.wav_path = None
         self.channels = 0
 
+    # Loads file and converts to .wav if necessary
     def load_audio_file(self, file_path):
         _, extension = os.path.splitext(file_path)
         file_type = extension.lower()
@@ -27,6 +27,7 @@ class AudioModel:
         self.audio_data = AudioSegment.from_wav(file_path)
         self.wav_path = file_path
 
+    # Converts .wav file to mono if necessary
     def strip_metadata(self):
         with wave.open(self.wav_path, 'rb') as file:
             self.channels = file.getnchannels()
@@ -36,31 +37,21 @@ class AudioModel:
             self.audio_data.export(self.wav_path, format='wav')
             print(self.audio_data.channels)
 
-
     def get_wave_duration(self):
         return self.audio_data.duration_seconds
 
+    # Plots the .wav file graph
     def show_wav(self):
         samplerate, data = wavfile.read(self.wav_path)
         length = data.shape[0] / samplerate
         time = np.linspace(0., length, data.shape[0])
         plt.plot(time, data, label="Mono channel")
-        '''
-        samplerate, data = wavfile.read(self.wav_path)
-        length = data.shape[0] / samplerate
-        time = np.linspace(0., length, data.shape[0])
-        if self.channels == 1:
-            plt.plot(time, data, label="Mono channel")
-        # If it's exactly 2 channels, it shows a stereo graph
-        if self.channels == 2:
-            plt.plot(time, data[:, 0], label="Left channel")
-            plt.plot(time, data[:, 1], label="Right channel")
-            '''
         plt.legend()
         plt.xlabel("Time [s]")
         plt.ylabel("Amplitude")
         plt.show()
 
+    # Returns the resonance frequency
     def get_freq(self):
         sample_rate, data = wavfile.read(self.wav_path)
         result = np.fft.fft(data)
@@ -71,16 +62,12 @@ class AudioModel:
 
         return peak_frequency
 
+    # Plots RT60 for given target frequency (low, mid, or high)
     def show_freq(self, target):
         if self.channels == 1:
             sample_rate, data = wavfile.read(self.wav_path)
             spectrum, freqs, t, im = plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
             plt.close()
-            #cbar = plt.colorbar(im)
-            #plt.xlabel('Time (s)')
-            #plt.ylabel('Frequency (Hz)')
-            #cbar.set_label('Intensity (dB)')
-            # plt.show()
 
         def find_target_frequency(freqs, t):
             for x in freqs:
@@ -128,17 +115,13 @@ class AudioModel:
         plt.show()
         return target_frequency, rt60
 
+    # Creates labeled plot of all three frequency regions
     def combine_plots(self, targets):
 
         if self.channels == 1:
             sample_rate, data = wavfile.read(self.wav_path)
             spectrum, freqs, t, im = plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
             plt.close()
-            #cbar = plt.colorbar(im)
-            #plt.xlabel('Time (s)')
-            #plt.ylabel('Frequency (Hz)')
-            #cbar.set_label('Intensity (dB)')
-            # plt.show()
         plt.figure(2)
         colors = ['blue', 'green', 'red']
 
@@ -188,3 +171,13 @@ class AudioModel:
         plt.legend()
         plt.show()
 
+    # Creates and displays a spectrogram of the .wav file
+    def display_spectrogram(self):
+        sample_rate, data = wavfile.read(self.wav_path)
+        spectrum, freqs, t, im = plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
+        cbar = plt.colorbar(im)
+        plt.xlabel('Time (s)')
+        plt.ylabel('Frequency (Hz)')
+        cbar.set_label('Intensity (dB)')
+        plt.show()
+        plt.figure(2)

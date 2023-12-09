@@ -1,3 +1,4 @@
+# Communicates information between the gui and model modules
 class AudioController:
     def __init__(self, model, view):
         self.model = model
@@ -23,4 +24,7 @@ class AudioController:
 
     def combine_plots(self, targets):
         self.model.combine_plots(targets)
+
+    def display_spectrogram(self):
+        self.model.display_spectrogram()
 

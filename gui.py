@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 
-
+# Handles the interactive / visual aspects of the program
 class AudioView:
     def __init__(self, root, controller):
         self.controller = controller
@@ -11,6 +11,7 @@ class AudioView:
         self.window = root
         self.window.title("Acoustic Modeler")
 
+        # Initializes all GUI components
         self.label = tk.Label(self.window, text="Welcome to the Acoustic Modeler!")
         self.label.pack(pady=5)
 
@@ -19,6 +20,8 @@ class AudioView:
 
         self.combine_button = tk.Button(self.window, text="Combine Plots", command=self.combine_plots)
         self.combine_button.pack_forget()
+
+        self.spectrogram_button = tk.Button(self.window, text="Display Spectogram", command=self.display_spectrogram)
 
         self.duration_label = tk.Label(self.window, text="")
         self.duration_label.pack(pady=0)
@@ -41,6 +44,7 @@ class AudioView:
         self.difference_label = tk.Label(self.window, text="")
         self.difference_label.pack(pady=1)
 
+    # Loads audio file, displays relevant info, and calls graph plotter
     def load_audio_file(self):
         file_path = filedialog.askopenfilename(title="Select Audio File")
         self.controller.load_audio_file(file_path)
@@ -49,25 +53,38 @@ class AudioView:
         self.file_name_label.config(text=f"File: {file_name}")
 
         self.controller.strip_metadata()
-        formatted_duration = "{:.2f}".format(self.controller.get_wave_duration())
-        self.duration_label.config(text=f"Duration: {formatted_duration} seconds")
+        self.display_file_info()
         self.controller.show_wav()
-        formatted_frequency = "{:.2f}".format(self.controller.get_freq())
-        self.frequency_label.config(text=f"Resonance Frequency: {formatted_frequency} Hz")
 
-        target_frequency, rt601 = self.controller.plot_rt60(self.targets[0])
-        self.low_label.config(text=f'The RT60 reverb time at freq {int(target_frequency)}Hz is {round(abs(rt601), 2)} seconds')
-        target_frequency, rt602 = self.controller.plot_rt60(self.targets[1])
-        self.med_label.config(text=f'The RT60 reverb time at freq {int(target_frequency)}Hz is {round(abs(rt602), 2)} seconds')
-        target_frequency, rt603 = self.controller.plot_rt60(self.targets[2])
-        self.high_label.config(text=f'The RT60 reverb time at freq {int(target_frequency)}Hz is {round(abs(rt603), 2)} seconds')
-
-        average_rt60 = (rt601 + rt602 + rt603) / 3
-        self.difference_label.config(text= f"RT60 difference: {round(average_rt60, 2) - .5}")
+        self.plot_graphs()
 
         self.combine_button.pack(pady=1)
-
-
+        self.spectrogram_button.pack(pady=1)
 
     def combine_plots(self):
         self.controller.combine_plots(self.targets)
+
+    def display_spectrogram(self):
+        self.controller.display_spectrogram()
+
+    def display_file_info(self):
+        formatted_duration = "{:.2f}".format(self.controller.get_wave_duration())
+        self.duration_label.config(text=f"Duration: {formatted_duration} seconds")
+        formatted_duration = "{:.2f}".format(self.controller.get_wave_duration())
+        self.duration_label.config(text=f"Duration: {formatted_duration} seconds")
+        formatted_frequency = "{:.2f}".format(self.controller.get_freq())
+        self.frequency_label.config(text=f"Resonance Frequency: {formatted_frequency} Hz")
+
+    def plot_graphs(self):
+        target_frequency, rt601 = self.controller.plot_rt60(self.targets[0])
+        self.low_label.config(
+            text=f'The RT60 reverb time at freq {int(target_frequency)}Hz is {round(abs(rt601), 2)} seconds')
+        target_frequency, rt602 = self.controller.plot_rt60(self.targets[1])
+        self.med_label.config(
+            text=f'The RT60 reverb time at freq {int(target_frequency)}Hz is {round(abs(rt602), 2)} seconds')
+        target_frequency, rt603 = self.controller.plot_rt60(self.targets[2])
+        self.high_label.config(
+            text=f'The RT60 reverb time at freq {int(target_frequency)}Hz is {round(abs(rt603), 2)} seconds')
+
+        average_rt60 = (rt601 + rt602 + rt603) / 3
+        self.difference_label.config(text=f"RT60 difference: {round(average_rt60, 2) - .5}")

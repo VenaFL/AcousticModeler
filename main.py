@@ -8,4 +8,5 @@ audio_view = AudioView(tk.Tk(), AudioController(audio_model, None))
 
 audio_view.controller.view = audio_view
 
+# Entry point for the program
 audio_view.window.mainloop()

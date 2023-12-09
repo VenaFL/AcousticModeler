@@ -1,3 +1,3 @@
 # AcousticModeler
-# Takes .wav or .mp3 and calculates rt60 at various frequencies
+# Takes .wav or .mp3 and calculates/displays rt60 at low, mid, and high frequencies
 
