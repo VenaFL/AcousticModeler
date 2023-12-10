@@ -90,7 +90,7 @@ class AudioView:
         self.high_label.config(
             text=f'The RT60 reverb time at freq {int(target_frequency)}Hz is {round(abs(rt603), 2)} seconds')
 
-        average_rt60 = (rt601 + rt602 + rt603) / 3
+        average_rt60 = abs((rt601 + rt602 + rt603) / 3)
         self.difference_label.config(text=f"RT60 difference: {round(average_rt60, 2) - .5}")
 
     def toggle_plots(self):
