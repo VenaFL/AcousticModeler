@@ -86,6 +86,7 @@ class AudioModel:
 
         data_in_db = frequency_check()
         plt.figure(2)
+        plt.title(self.get_title(target))
         plt.plot(t, data_in_db, linewidth=1, alpha=0.7, color='#004bc6')
         plt.xlabel('Time (s)')
         plt.ylabel('Power (dB)')
@@ -168,6 +169,7 @@ class AudioModel:
             rt20 = (t[index_of_max_less_5] - t[index_of_max_less_25])[0]
             rt60 = 3 * rt20
             plt.grid()
+        plt.title("Combined Low, Mid, High Plots")
         plt.legend()
         plt.show()
 
@@ -181,3 +183,12 @@ class AudioModel:
         cbar.set_label('Intensity (dB)')
         plt.show()
         plt.figure(2)
+
+    # Gets plot title corresponding to frequency
+    def get_title(self, target):
+        if target < 750:
+            return "Low Plot"
+        elif target < 2000:
+            return "Mid Plot"
+        else:
+            return "High Plot"

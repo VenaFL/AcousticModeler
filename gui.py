@@ -7,7 +7,7 @@ class AudioView:
         self.controller = controller
 
         self.targets = [250, 1000, 5000]
-
+        self.plot_counter = 0
         self.window = root
         self.window.title("Acoustic Modeler")
 
@@ -22,6 +22,9 @@ class AudioView:
         self.combine_button.pack_forget()
 
         self.spectrogram_button = tk.Button(self.window, text="Display Spectogram", command=self.display_spectrogram)
+        self.spectrogram_button.pack_forget()
+
+        self.toggle_button = tk.Button(self.window, text="Toggle Low, Mid, High Frequency Plots", command=self.toggle_plots)
 
         self.duration_label = tk.Label(self.window, text="")
         self.duration_label.pack(pady=0)
@@ -60,6 +63,7 @@ class AudioView:
 
         self.combine_button.pack(pady=1)
         self.spectrogram_button.pack(pady=1)
+        self.toggle_button.pack(pady=1)
 
     def combine_plots(self):
         self.controller.combine_plots(self.targets)
@@ -88,3 +92,14 @@ class AudioView:
 
         average_rt60 = (rt601 + rt602 + rt603) / 3
         self.difference_label.config(text=f"RT60 difference: {round(average_rt60, 2) - .5}")
+
+    def toggle_plots(self):
+        if self.plot_counter % 3 == 0:
+            self.controller.plot_rt60(self.targets[0])
+        elif self.plot_counter % 3 == 1:
+            self.controller.plot_rt60(self.targets[1])
+        elif self.plot_counter % 3 == 2:
+            self.controller.plot_rt60(self.targets[2])
+        self.plot_counter += 1
+
+
