@@ -1,0 +1,7 @@
+matplotlib
+tkinter
+pydub
+scipy
+numpy
+ffmpeg
+wave
